@@ -1,0 +1,43 @@
+# SUTO — website
+
+A Next.js clothing store for **SUTO** with a live runway: five looks queue on a runway, you drag or tap to make the front model walk out, the page takes each look's colour, and you can buy a whole look or single pieces. Bangla / English toggle, bag drawer, and cash-on-delivery checkout saved to Supabase.
+
+## Change the store
+
+Everything you will want to edit is in **`lib/config.ts`**:
+
+| What | Where |
+|---|---|
+| Brand name, tagline, phone, email | `SUTO.brand`, `SUTO.tagline`, `SUTO.contact` |
+| Delivery fees | `SUTO.delivery` *(also change in the `suto_place_order` function in Supabase)* |
+| Looks, colours, products, prices, sizes | `SUTO.looks` |
+| Real photos instead of the drawn models | put a transparent PNG in `public/looks/` and set `image: "/looks/look1.png"` |
+
+Words on the site (both languages) are in **`lib/i18n.ts`**.
+
+**Prices:** the checkout charges the price stored in Supabase table `suto_products`, not the one in the browser. When you change a price, size or add a product in `lib/config.ts`, change the same row in `suto_products` (Supabase → Table editor).
+
+## Orders
+
+Orders land in Supabase:
+- `suto_orders` — customer, phone, address, zone, totals, status (`pending` → `confirmed` → `shipped` → `delivered` / `cancelled`)
+- `suto_order_items` — what was bought, size, qty, price
+
+Visitors can only *create* orders (through the `suto_place_order` function, which checks the phone number, sizes and prices). They can't read anyone's orders. You see them in the Supabase dashboard.
+
+The database setup is in `supabase/migrations/001_suto_store.sql`.
+
+## Run locally
+
+```bash
+npm install
+cp .env.example .env.local   # fill in the two Supabase values
+npm run dev
+```
+
+## Deploy
+
+Hosted on Vercel from this repo. Set these environment variables in Vercel → Project → Settings → Environment Variables:
+
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
