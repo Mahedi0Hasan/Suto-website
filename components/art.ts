@@ -49,6 +49,7 @@ const ICONS: Record<string, string> = {
   dress: "M40 8 L44 8 L46 20 L54 20 L56 8 L60 8 L60 34 L80 92 L20 92 L40 34Z",
   drape: "M18 16 Q50 32 82 16 L78 84 Q50 70 22 84Z",
   shoes: "M12 58 L38 58 Q46 70 60 70 L84 72 Q90 80 86 86 L12 86Z",
+  bag: "M28 40 L72 40 L80 88 L20 88Z M38 40 Q38 18 50 18 Q62 18 62 40",
 };
 export function iconSvg(kind: string, color: string): string {
   return `<svg viewBox="0 0 100 100" aria-hidden="true"><path d="${ICONS[kind] || ICONS.shirt}" fill="${color}" stroke="rgba(0,0,0,.18)" stroke-width="1.5" stroke-linejoin="round"/>${kind === "blazer" ? '<path d="M50 40 L50 90" stroke="rgba(0,0,0,.2)" stroke-width="1.5"/>' : ""}</svg>`;

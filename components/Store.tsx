@@ -18,10 +18,7 @@ const FILTERS = ["all", "women", "men", "deshi", "western"] as const;
 /* depth → [x %, y %, scale, blur px, opacity] */
 const POS = [[0, 0, 1, 0, 1], [24, -7, 0.8, 1.4, 0.9], [-24, -12, 0.66, 2.4, 0.8], [44, -16, 0.55, 3.2, 0.7], [-44, -19, 0.47, 4, 0.6]];
 
-const pieceColor = (p: FlatPiece) => {
-  const o = looks[p.look].outfit;
-  return p.slot === "shoes" ? o.shoes : o[p.slot].color;
-};
+const pieceColor = (p: Piece) => p.color;
 const midSize = (p: Piece) => p.sizes[Math.floor((p.sizes.length - 1) / 2)];
 const store = {
   get<V>(k: string, d: V): V { try { const v = localStorage.getItem(k); return v ? (JSON.parse(v) as V) : d; } catch { return d; } },
@@ -67,7 +64,7 @@ export default function Store() {
   useEffect(() => {
     reduce.current = matchMedia("(prefers-reduced-motion: reduce)").matches;
     setLang(store.get<Lang>("suto_lang", "en"));
-    setBag(store.get<BagItem[]>("suto_bag", []).filter((i) => byId[i.id]));
+    setBag(store.get<BagItem[]>("suto_bag", []).filter((i) => byId[i.id] && byId[i.id].sizes.includes(i.size)));
     setZone(store.get<Zone>("suto_zone", "dhaka"));
     setLoaded(true);
   }, []);
@@ -213,7 +210,7 @@ export default function Store() {
   const lk = looks[cur];
   const lookTotal = lk.pieces.reduce((a, p) => a + p.price, 0);
   const shown = useMemo(() => pieces.filter((p) => filter === "all" || looks[p.look].gender === filter || looks[p.look].style === filter), [filter]);
-  const figures = useMemo(() => looks.map((l) => figureSvg(l.outfit)), []);
+  const figures = useMemo(() => looks.map((l) => (l.outfit ? figureSvg(l.outfit) : "")), []);
   const icons = useMemo(() => pieces.map((p) => iconSvg(p.kind, pieceColor(p))), []);
 
   const Sizes = ({ p }: { p: Piece }) => (
@@ -257,7 +254,7 @@ export default function Store() {
                 return (
                   <div key={k} className={cls} data-k={k} role="button" tabIndex={depth ? 0 : -1} aria-label={L(l.name)}
                     style={{ "--x": `${p[0]}%`, "--y": `${p[1]}%`, "--s": p[2], "--b": `${p[3]}px`, "--o": depth < POS.length ? p[4] : 0, zIndex: 10 - depth } as React.CSSProperties}>
-                    {l.image ? <img src={l.image} alt="" /> : <div style={{ display: "contents" }} dangerouslySetInnerHTML={{ __html: figures[k] }} />}
+                    {l.image ? <img src={l.image} alt={L(l.name)} draggable={false} loading={k < 2 ? "eager" : "lazy"} /> : <div style={{ display: "contents" }} dangerouslySetInnerHTML={{ __html: figures[k] }} />}
                     {l.pieces.map((pc) => (
                       <button key={pc.id} className="dot" aria-label={L(pc.name)} style={{ left: `${pc.dot[0] / 2}%`, top: `${pc.dot[1] / 5.2}%` }}
                         onClick={() => { setFlash(pc.id); setTimeout(() => setFlash(null), 900); }} />
@@ -282,7 +279,7 @@ export default function Store() {
             <ul className="pieces">
               {lk.pieces.map((p) => (
                 <li key={p.id} className={flash === p.id ? "flash" : ""}>
-                  <span className="sw" style={{ background: pieceColor({ ...p, look: cur }) }} />
+                  <span className="sw" style={{ background: pieceColor(p) }} />
                   <span className="pname">{L(p.name)}</span>
                   <span className="price">{money(p.price)}</span>
                   <Sizes p={p} />
@@ -308,7 +305,12 @@ export default function Store() {
             <div className="grid">
               {shown.map((p) => (
                 <article className="card" key={p.id}>
-                  <div className="pic" style={{ background: looks[p.look].bg }} dangerouslySetInnerHTML={{ __html: icons[pieces.indexOf(p)] }} />
+                  {looks[p.look].image ? (
+                    <div className="pic photo" role="img" aria-label={L(p.name)}
+                      style={{ backgroundColor: looks[p.look].bg, backgroundImage: `url(${looks[p.look].image})`, backgroundPosition: `${(p.dot[0] / 200) * 100}% ${(p.dot[1] / 520) * 100}%` }} />
+                  ) : (
+                    <div className="pic" style={{ background: looks[p.look].bg }} dangerouslySetInnerHTML={{ __html: icons[pieces.indexOf(p)] }} />
+                  )}
                   <div className="body">
                     <div className="row"><b>{L(p.name)}</b><span className="price">{money(p.price)}</span></div>
                     <span className="from">{tr("from_look")} {L(looks[p.look].name)}</span>

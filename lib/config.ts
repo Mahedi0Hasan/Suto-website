@@ -6,9 +6,10 @@
                                  suto_place_order function in Supabase.
    • looks                     : the runway looks (add or remove freely)
        bg / ink  : page colour while the look is in front, and its text colour
-       image     : "" = drawn placeholder model. For a real photo, put a
-                   transparent PNG in /public/looks and write "/looks/look1.png"
-       outfit    : colours of the drawn placeholder
+       image     : the model photo — a transparent PNG/WebP in /public/looks,
+                   e.g. "/looks/look1.webp", about 400 × 1040 px, feet at the bottom.
+                   Leave "" and fill `outfit` to use a drawn placeholder instead.
+       color     : swatch colour shown next to each piece
        pieces    : items in the look. dot = [x, y] position of the white dot
                    on the model (x 0–200, y 0–520).
                    id, price and sizes must match the suto_products table
@@ -19,7 +20,7 @@ export type Lang = "en" | "bn";
 export type Text = { en: string; bn: string };
 export type Slot = "top" | "bottom" | "layer" | "shoes";
 export type Piece = {
-  id: string; slot: Slot; kind: string; name: Text;
+  id: string; slot: Slot; kind: string; color: string; name: Text;
   price: number; sizes: string[]; dot: [number, number];
 };
 export type Outfit = {
@@ -31,7 +32,7 @@ export type Outfit = {
 };
 export type Look = {
   name: Text; note: Text; gender: "men" | "women"; style: "deshi" | "western";
-  bg: string; ink: string; image: string; outfit: Outfit; pieces: Piece[];
+  bg: string; ink: string; image: string; outfit?: Outfit; pieces: Piece[];
 };
 
 export const SUTO = {
@@ -46,53 +47,57 @@ export const SUTO = {
   },
   looks: [
     {
-      name: { en: "Indigo Eid", bn: "নীল ঈদ" }, gender: "men", style: "deshi", bg: "#1e3557", ink: "#f3ecdf", image: "",
-      note: { en: "A hand-finished cotton panjabi with a mustard shawl for evening prayers and long dinners.", bn: "হাতে ফিনিশ করা সুতির পাঞ্জাবি, সন্ধ্যার নামাজ আর লম্বা দাওয়াতের জন্য সরষে রঙের শাল।" },
-      outfit: { skin: "#8a5a3c", hair: "short", hairColor: "#1a1410", top: { shape: "kurti", color: "#efe6d2" }, bottom: { shape: "trouser", color: "#cdbb97" }, layer: { shape: "drape", color: "#d6a03a" }, shoes: "#3b2a1e" },
+      name: { en: "Sand Street", bn: "স্যান্ড স্ট্রিট" }, gender: "men", style: "western", bg: "#1f2a37", ink: "#efe7da", image: "/looks/look1.webp",
+      note: { en: "A sand twill jacket over a black fleece hoodie, with black cargos and clean white sneakers.", bn: "কালো ফ্লিস হুডির ওপর বালু রঙের টুইল জ্যাকেট, সাথে কালো কার্গো আর সাদা স্নিকার।" },
       pieces: [
-        { id: "p1", slot: "top", kind: "kurti", name: { en: "Cotton panjabi", bn: "সুতির পাঞ্জাবি" }, price: 4200, sizes: ["S", "M", "L", "XL"], dot: [96, 350] },
-        { id: "p2", slot: "bottom", kind: "trouser", name: { en: "Pajama trouser", bn: "পায়জামা" }, price: 2200, sizes: ["S", "M", "L", "XL"], dot: [89, 435] },
-        { id: "p3", slot: "layer", kind: "drape", name: { en: "Mustard shawl", bn: "সরষে রঙের শাল" }, price: 3500, sizes: ["Free"], dot: [62, 170] },
+        { id: "p1", slot: "layer", kind: "blazer", color: "#d9c7b3", name: { en: "Sand twill jacket", bn: "স্যান্ড টুইল জ্যাকেট" }, price: 4600, sizes: ["S", "M", "L", "XL"], dot: [38, 190] },
+        { id: "p2", slot: "top", kind: "shirt", color: "#1a1a1a", name: { en: "Black fleece hoodie", bn: "কালো ফ্লিস হুডি" }, price: 2800, sizes: ["S", "M", "L", "XL"], dot: [100, 175] },
+        { id: "p3", slot: "bottom", kind: "trouser", color: "#222222", name: { en: "Black cargo trouser", bn: "কালো কার্গো ট্রাউজার" }, price: 3200, sizes: ["30", "32", "34", "36"], dot: [62, 360] },
       ],
     },
     {
-      name: { en: "Rose Kurti", bn: "গোলাপি কুর্তি" }, gender: "women", style: "deshi", bg: "#e7b3b6", ink: "#3b1820", image: "",
-      note: { en: "An embroidered kurti over wide palazzos, finished with a light gold dupatta.", bn: "চওড়া পালাজোর ওপর এমব্রয়ডারি করা কুর্তি, সাথে হালকা সোনালি ওড়না।" },
-      outfit: { skin: "#b97c56", hair: "long", hairColor: "#241712", top: { shape: "kurti", color: "#7d1d3f" }, bottom: { shape: "wide", color: "#f4e3c3" }, layer: { shape: "drape", color: "#d9ab55" }, shoes: "#7d1d3f" },
+      name: { en: "Maroon Eid", bn: "মেরুন ঈদ" }, gender: "women", style: "deshi", bg: "#ead9c6", ink: "#3d1418", image: "/looks/look2.webp",
+      note: { en: "A hand-embroidered maroon kameez with a sheer organza dupatta and straight salwar.", bn: "হাতে এমব্রয়ডারি করা মেরুন কামিজ, পাতলা অর্গাঞ্জা ওড়না আর সোজা সালোয়ার।" },
       pieces: [
-        { id: "p4", slot: "top", kind: "kurti", name: { en: "Embroidered kurti", bn: "এমব্রয়ডারি কুর্তি" }, price: 3800, sizes: ["S", "M", "L"], dot: [96, 345] },
-        { id: "p5", slot: "bottom", kind: "wide", name: { en: "Palazzo", bn: "পালাজো" }, price: 2400, sizes: ["S", "M", "L"], dot: [124, 440] },
-        { id: "p6", slot: "layer", kind: "drape", name: { en: "Chiffon dupatta", bn: "শিফন ওড়না" }, price: 2000, sizes: ["Free"], dot: [62, 170] },
+        { id: "p4", slot: "top", kind: "kurti", color: "#7a1f2b", name: { en: "Embroidered kameez", bn: "এমব্রয়ডারি কামিজ" }, price: 6800, sizes: ["S", "M", "L"], dot: [78, 300] },
+        { id: "p5", slot: "layer", kind: "drape", color: "#8a2a35", name: { en: "Organza dupatta", bn: "অর্গাঞ্জা ওড়না" }, price: 3200, sizes: ["Free"], dot: [148, 300] },
+        { id: "p6", slot: "bottom", kind: "trouser", color: "#7a1f2b", name: { en: "Straight salwar", bn: "সোজা সালোয়ার" }, price: 2200, sizes: ["S", "M", "L"], dot: [68, 450] },
       ],
     },
     {
-      name: { en: "Olive Tailoring", bn: "অলিভ টেইলরিং" }, gender: "men", style: "western", bg: "#56653a", ink: "#f2efe3", image: "",
-      note: { en: "An unlined linen blazer, crisp Oxford shirt and a tapered trouser for warm-city offices.", bn: "গরম শহরের অফিসের জন্য লাইনিং ছাড়া লিনেন ব্লেজার, মচমচে অক্সফোর্ড শার্ট আর টেপার্ড ট্রাউজার।" },
-      outfit: { skin: "#c08560", hair: "short", hairColor: "#2a1d14", top: { shape: "shirt", color: "#f7f5ef" }, bottom: { shape: "trouser", color: "#24231f" }, layer: { shape: "blazer", color: "#e1d6bd" }, shoes: "#4a2f1e" },
+      name: { en: "Weekend Khaki", bn: "উইকেন্ড খাকি" }, gender: "men", style: "western", bg: "#3c4a3a", ink: "#f1ece0", image: "/looks/look3.webp",
+      note: { en: "A heavyweight black hoodie, relaxed khaki cargos and black-and-white high-tops.", bn: "ভারী কালো হুডি, ঢিলেঢালা খাকি কার্গো আর সাদা-কালো হাই-টপ স্নিকার।" },
       pieces: [
-        { id: "p7", slot: "layer", kind: "blazer", name: { en: "Linen blazer", bn: "লিনেন ব্লেজার" }, price: 7900, sizes: ["38", "40", "42", "44"], dot: [72, 230] },
-        { id: "p8", slot: "top", kind: "shirt", name: { en: "Oxford shirt", bn: "অক্সফোর্ড শার্ট" }, price: 2600, sizes: ["S", "M", "L", "XL"], dot: [100, 170] },
-        { id: "p9", slot: "bottom", kind: "trouser", name: { en: "Tailored trouser", bn: "টেইলর্ড ট্রাউজার" }, price: 3200, sizes: ["30", "32", "34", "36"], dot: [111, 395] },
+        { id: "p7", slot: "top", kind: "shirt", color: "#151515", name: { en: "Heavyweight hoodie", bn: "হেভিওয়েট হুডি" }, price: 2800, sizes: ["S", "M", "L", "XL"], dot: [100, 175] },
+        { id: "p8", slot: "bottom", kind: "trouser", color: "#c8b48f", name: { en: "Khaki cargo trouser", bn: "খাকি কার্গো ট্রাউজার" }, price: 3200, sizes: ["30", "32", "34", "36"], dot: [78, 360] },
+        { id: "p9", slot: "shoes", kind: "shoes", color: "#f2f2f2", name: { en: "High-top sneakers", bn: "হাই-টপ স্নিকার" }, price: 5500, sizes: ["40", "41", "42", "43", "44"], dot: [148, 492] },
       ],
     },
     {
-      name: { en: "Saffron Midi", bn: "জাফরানি মিডি" }, gender: "women", style: "western", bg: "#ef9f3c", ink: "#2b1606", image: "",
-      note: { en: "A maroon midi dress, a cropped linen jacket and block-heel mules — day to night.", bn: "মেরুন মিডি ড্রেস, ছোট লিনেন জ্যাকেট আর ব্লক-হিল মিউল — দিন থেকে রাত।" },
-      outfit: { skin: "#8d5a3b", hair: "bun", hairColor: "#140d0a", top: { shape: "dress", color: "#7a2b24" }, bottom: { shape: "none", color: "" }, layer: { shape: "blazer", color: "#f6ead2" }, shoes: "#f6ead2" },
+      name: { en: "Chocolate Tailoring", bn: "চকলেট টেইলরিং" }, gender: "women", style: "western", bg: "#20403f", ink: "#f0e9dc", image: "/looks/look4.webp",
+      note: { en: "An oversized chocolate blazer, a cream rib-knit top and pleated wide-leg trousers.", bn: "ঢিলে চকলেট ব্লেজার, ক্রিম রিব-নিট টপ আর প্লিট করা চওড়া ট্রাউজার।" },
       pieces: [
-        { id: "p10", slot: "top", kind: "dress", name: { en: "Midi dress", bn: "মিডি ড্রেস" }, price: 5600, sizes: ["XS", "S", "M", "L"], dot: [100, 390] },
-        { id: "p11", slot: "layer", kind: "blazer", name: { en: "Cropped linen jacket", bn: "ক্রপড লিনেন জ্যাকেট" }, price: 4800, sizes: ["S", "M", "L"], dot: [128, 230] },
-        { id: "p12", slot: "shoes", kind: "shoes", name: { en: "Block-heel mules", bn: "ব্লক-হিল মিউল" }, price: 3200, sizes: ["36", "37", "38", "39", "40"], dot: [87, 480] },
+        { id: "p10", slot: "layer", kind: "blazer", color: "#3b2418", name: { en: "Chocolate blazer", bn: "চকলেট ব্লেজার" }, price: 7800, sizes: ["S", "M", "L"], dot: [42, 160] },
+        { id: "p11", slot: "top", kind: "shirt", color: "#e4d6c2", name: { en: "Rib-knit top", bn: "রিব-নিট টপ" }, price: 2200, sizes: ["S", "M", "L"], dot: [100, 160] },
+        { id: "p12", slot: "bottom", kind: "wide", color: "#e8dccb", name: { en: "Pleated wide trouser", bn: "প্লিটেড ওয়াইড ট্রাউজার" }, price: 3600, sizes: ["S", "M", "L"], dot: [72, 380] },
       ],
     },
     {
-      name: { en: "Charcoal Street", bn: "চারকোল স্ট্রিট" }, gender: "men", style: "western", bg: "#26272b", ink: "#f0eee9", image: "",
-      note: { en: "A rust overshirt over a heavyweight tee, with roomy cargo trousers for the weekend.", bn: "ভারী টি-শার্টের ওপর মরিচা রঙের ওভারশার্ট, ছুটির দিনের জন্য ঢিলেঢালা কার্গো ট্রাউজার।" },
-      outfit: { skin: "#a8714c", hair: "short", hairColor: "#111111", top: { shape: "shirt", color: "#e8e6e1" }, bottom: { shape: "trouser", color: "#6f735e" }, layer: { shape: "blazer", color: "#c4553a" }, shoes: "#e8e6e1" },
+      name: { en: "Campus Brown", bn: "ক্যাম্পাস ব্রাউন" }, gender: "men", style: "western", bg: "#e2d9cb", ink: "#2b1d14", image: "/looks/look5.webp",
+      note: { en: "A washed brown utility jacket over a soft grey hoodie, with black cargos for long days.", bn: "নরম ধূসর হুডির ওপর ওয়াশড বাদামি ইউটিলিটি জ্যাকেট, লম্বা দিনের জন্য কালো কার্গো।" },
       pieces: [
-        { id: "p13", slot: "layer", kind: "blazer", name: { en: "Rust overshirt", bn: "রাস্ট ওভারশার্ট" }, price: 4400, sizes: ["S", "M", "L", "XL"], dot: [72, 240] },
-        { id: "p14", slot: "top", kind: "shirt", name: { en: "Heavyweight tee", bn: "হেভিওয়েট টি-শার্ট" }, price: 2000, sizes: ["S", "M", "L", "XL"], dot: [100, 170] },
-        { id: "p15", slot: "bottom", kind: "trouser", name: { en: "Cargo trouser", bn: "কার্গো ট্রাউজার" }, price: 3600, sizes: ["30", "32", "34", "36"], dot: [111, 400] },
+        { id: "p13", slot: "layer", kind: "blazer", color: "#6b4228", name: { en: "Brown utility jacket", bn: "বাদামি ইউটিলিটি জ্যাকেট" }, price: 5200, sizes: ["S", "M", "L", "XL"], dot: [40, 185] },
+        { id: "p14", slot: "top", kind: "shirt", color: "#e6e6e3", name: { en: "Soft grey hoodie", bn: "নরম ধূসর হুডি" }, price: 2600, sizes: ["S", "M", "L", "XL"], dot: [100, 215] },
+        { id: "p15", slot: "bottom", kind: "trouser", color: "#1c1c1c", name: { en: "Black cargo trouser", bn: "কালো কার্গো ট্রাউজার" }, price: 3200, sizes: ["30", "32", "34", "36"], dot: [70, 375] },
+      ],
+    },
+    {
+      name: { en: "Burgundy Knit", bn: "বার্গান্ডি নিট" }, gender: "women", style: "western", bg: "#c9d2da", ink: "#2a1620", image: "/looks/look6.webp",
+      note: { en: "A burgundy ribbed turtleneck, cream utility cargos and a structured leather shoulder bag.", bn: "বার্গান্ডি রিবড টার্টলনেক, ক্রিম ইউটিলিটি কার্গো আর শক্ত চামড়ার কাঁধের ব্যাগ।" },
+      pieces: [
+        { id: "p16", slot: "top", kind: "shirt", color: "#5a1e30", name: { en: "Ribbed turtleneck", bn: "রিবড টার্টলনেক" }, price: 2600, sizes: ["S", "M", "L"], dot: [88, 150] },
+        { id: "p17", slot: "bottom", kind: "wide", color: "#e6dccb", name: { en: "Cream utility cargo", bn: "ক্রিম ইউটিলিটি কার্গো" }, price: 3400, sizes: ["S", "M", "L"], dot: [76, 360] },
+        { id: "p18", slot: "layer", kind: "bag", color: "#1a1a1a", name: { en: "Leather shoulder bag", bn: "চামড়ার কাঁধের ব্যাগ" }, price: 4800, sizes: ["Free"], dot: [178, 255] },
       ],
     },
   ] as Look[],

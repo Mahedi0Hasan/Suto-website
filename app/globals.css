@@ -201,3 +201,14 @@ footer a{text-decoration:none;opacity:.85}footer a:hover{opacity:1;text-decorati
 .oact{display:flex;flex-wrap:wrap;gap:8px;align-items:center;border-top:1px solid var(--line);padding-top:12px}
 .chip.act{border-color:transparent;font-weight:600}
 @media(max-width:700px){.ocols{grid-template-columns:minmax(0,1fr)}}
+
+/* photo models */
+.model img{filter:drop-shadow(0 18px 18px rgba(0,0,0,.28));user-select:none;-webkit-user-drag:none;object-position:50% 100%}
+.walk img{animation:bob .38s ease-in-out infinite alternate}
+@keyframes bob{from{transform:translateY(0) rotate(-.6deg)}to{transform:translateY(-1.2%) rotate(.6deg)}}
+.card .pic.photo{background-repeat:no-repeat;background-size:260% auto;transition:background-size .6s ease}
+.card:hover .pic.photo{background-size:285% auto}
+.card .pic.photo{background-size:auto 150%}
+.card:hover .pic.photo{background-size:auto 162%}
+.model{width:clamp(120px,16.5vw,205px)}
+@media(min-width:861px){.model{left:calc(56% + var(--x))}.model.leave{left:56%}}

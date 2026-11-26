@@ -11,7 +11,7 @@ Everything you will want to edit is in **`lib/config.ts`**:
 | Brand name, tagline, phone, email | `SUTO.brand`, `SUTO.tagline`, `SUTO.contact` |
 | Delivery fees | `SUTO.delivery` *(also change in the `suto_place_order` function in Supabase)* |
 | Looks, colours, products, prices, sizes | `SUTO.looks` |
-| Real photos instead of the drawn models | put a transparent PNG in `public/looks/` and set `image: "/looks/look1.png"` |
+| Model photos | transparent WebP/PNG in `public/looks/` (about 400 × 1040, feet at the bottom), set as `image` on each look |
 
 Words on the site (both languages) are in **`lib/i18n.ts`**.
 
