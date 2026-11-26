@@ -25,7 +25,18 @@ Orders land in Supabase:
 
 Visitors can only *create* orders (through the `suto_place_order` function, which checks the phone number, sizes and prices). They can't read anyone's orders. You see them in the Supabase dashboard.
 
-The database setup is in `supabase/migrations/001_suto_store.sql`.
+### Admin page — `/admin`
+
+Sign in with a Supabase account whose `profiles.role` is `admin` or `staff`. You see today's orders, orders waiting to be confirmed, this month's sales, search by order code / name / phone, and move each order along: pending → confirmed → shipped → delivered (or cancelled). Every status change is logged in `suto_order_events`.
+
+To make someone an admin: create the user in Supabase → Authentication → Users → Add user, then in the SQL editor run
+
+```sql
+update public.profiles set role = 'admin'
+where id = (select id from auth.users where email = 'their@email.com');
+```
+
+The database setup is in `supabase/migrations/` (001 store, 002 admin).
 
 ## Run locally
 
